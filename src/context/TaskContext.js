@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer} from "react";
 import { LoginContext } from "./LoginContext";
+import fbConfig from "../firebaseconfig.json";
 
 const INITIAL_STATE = [];
 
@@ -46,7 +47,7 @@ const TaskProvider = (props) => {
       (today.getMonth()+1) + "/" + today.getDate() + "/" + today.getFullYear();
 
     const req = await fetch(
-      "https://react-personalprojects-default-rtdb.firebaseio.com/" + loginState.uid + "/notes.json",
+      fbConfig.databaseURL + '/' + loginState.uid + "/notes.json",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,7 +78,7 @@ const TaskProvider = (props) => {
   const editTaskHandler = async (taskObj) => {
 
     const req = await fetch(
-      "https://react-personalprojects-default-rtdb.firebaseio.com/" + loginState.uid + "/notes/"+ taskObj.taskID + ".json",
+      fbConfig.databaseURL + '/' + loginState.uid + "/notes/"+ taskObj.taskID + ".json",
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -97,7 +98,7 @@ const TaskProvider = (props) => {
   useEffect(() => {
     const fetchList = async () => {
       const req = await fetch(
-        "https://react-personalprojects-default-rtdb.firebaseio.com/" + loginState.uid + "/notes/.json"
+        fbConfig.databaseURL + '/' + loginState.uid + "/notes/.json"
       );
       const data = await req.json();
       let dataArray = [];
