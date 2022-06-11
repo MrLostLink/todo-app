@@ -9,50 +9,69 @@ import TaskAdd from "./components/Task/TaskAdd";
 import Login from "./components/Account/Login";
 import Register from "./components/Account/Register";
 import { initializeApp } from "firebase/app";
-import LoginProvider, { LoginContext } from "./context/LoginContext";
+import LoginProvider from "./context/LoginContext";
 import { Redirect } from "react-router-dom";
-import { useContext } from "react";
-import * as firebaseconfig from './firebaseconfig.json';
+import fbConfig from "./firebaseconfig.json";
+import { useState } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 
 function App() {
 
   const firebaseConfig = {
-    apiKey: firebaseconfig.apiKey,
-    authDomain: firebaseconfig.authDomain,
-    databaseURL: firebaseconfig.databaseURL,
-    projectId: firebaseconfig.projectId,
-    storageBucket: firebaseconfig.storageBucket,
-    messagingSenderId: firebaseconfig.messagingSenderId,
-    appId: firebaseconfig.appId
+    apiKey: fbConfig.apiKey,
+    authDomain: fbConfig.authDomain,
+    databaseURL: fbConfig.databaseURL,
+    projectId: fbConfig.projectId,
+    storageBucket: fbConfig.storageBucket,
+    messagingSenderId: fbConfig.messagingSenderId,
+    appId: fbConfig.appId,
   };
-  
-  const app = initializeApp(firebaseConfig);
 
-  const loginState = useContext(LoginContext);
-  console.log(loginState.sessionState);
+  // eslint-disable-next-line no-unused-vars
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+
+  const [loggedIn, setloggedIn] = useState(true);
+  useEffect(() => {
+    console.log(auth.currentUser);
+    onAuthStateChanged(auth, (user) => {
+      if (user) 
+        setloggedIn(true);
+      else  
+        setloggedIn(false);
+    });
+  
+  }, [auth])
   return (
     <LoginProvider>
-        <TaskProvider>
+      <TaskProvider>
         <NavBar />
         <Switch>
-          {loginState.sessionState.uid &&<Route path="/" exact>
+          {!loggedIn && (
+            <Route path="/login">
+              <Login></Login>
+            </Route>
+          )}
+          {!loggedIn && (
+            <Route path="*">
+              <Redirect to="/login" />
+            </Route>
+          )}
+          <Route path="/" exact>
             <TaskList></TaskList>
-          </Route>}
-          {loginState.sessionState.uid && <Route path="/add">
-            <TaskAdd/>
-          </Route>}
-          {loginState.sessionState.uid && <Route path="/edit/:taskID">
+          </Route>
+          <Route path="/add">
+            <TaskAdd />
+          </Route>
+          <Route path="/edit/:taskID">
             <TaskEdit />
-          </Route>}
-          {!loginState.sessionState.uid && <Route path="/register">
+          </Route>
+          <Route path="/register">
             <Register></Register>
-          </Route>}
-          {!loginState.sessionState.uid && <Route path="/login">
-            <Login></Login>
-          </Route>}
+          </Route>
           <Route path="*">
-            {loginState.sessionState.uid && <Redirect to="/"/>}
-            {!loginState.sessionState.uid && <Redirect to="/login"/>}
+            <Redirect to="/" />
           </Route>
         </Switch>
       </TaskProvider>

@@ -28,14 +28,16 @@ const Login = () => {
       return;
     }
 
-    const resp = await loginContext.loginAccount(emailState, pwState);
-    if (resp.code !== 1) {
-      setErrorState(resp.message);
-      setButtonState(false);
-    } else {
-      setErrorState("Logged in! Redirecting...");
-      navigate.push("/");
-    }
+    // eslint-disable-next-line no-unused-vars
+    const resp = loginContext.loginAccount(emailState, pwState).then(obj => {
+      if (obj.code === 2) {
+        setErrorState(obj.message);
+        setButtonState(false);
+      } else {
+        setErrorState("Logged in! Redirecting...");
+        navigate.push("/");
+      }
+    });
   };
 
   const onChangeHandler = (event) => {
@@ -59,7 +61,7 @@ const Login = () => {
         ></input>
         <button type="submit" disabled={buttonState}>Log in</button>
       </form>
-          {!errorState && <p>{errorState}</p>}
+          {errorState && <p>{errorState}</p>}
       <p>
         <Link to="/register">Register here</Link>
       </p>

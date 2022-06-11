@@ -11,11 +11,10 @@ const TaskList = () => {
 
   useEffect(() => {
     const filterList = () => {
-      let testRows = DUMMY_LIST.filter((item) => {
+      let fRows = DUMMY_LIST.filter((item) => {
         return item.title.includes(filterState) || item.description.includes(filterState);
       });
-      setListState(testRows);
-      console.log(testRows);
+      setListState(fRows);
     };
     const inputTimeout = setTimeout(filterList, 1500);
     return () => {

@@ -24,8 +24,8 @@ const NavBar = () => {
   return (
     <div>
         <p>LOGO</p>
-        {loginContext.sessionState.idToken && navBarTabs}
-        {loginContext.sessionState.idToken && <button onClick={logoutHandler}>Logout</button>}
+        {loginContext.sessionState.uid && navBarTabs}
+        {loginContext.sessionState.uid && <button onClick={logoutHandler}>Logout</button>}
     </div>
   );
 };
