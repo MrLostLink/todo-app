@@ -1,6 +1,10 @@
 import { useHistory, Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { LoginContext } from "../../context/LoginContext";
+import { Button, Grid, TextField, Typography, Stack } from "@mui/material";
+import { Box, Container } from "@mui/system";
+import CottageRoundedIcon from '@mui/icons-material/CottageRounded';
+import styles from "./Login.module.css";
 
 const Login = () => {
   const [emailState, setEmailState] = useState("");
@@ -29,7 +33,7 @@ const Login = () => {
     }
 
     // eslint-disable-next-line no-unused-vars
-    const resp = loginContext.loginAccount(emailState, pwState).then(obj => {
+    const resp = loginContext.loginAccount(emailState, pwState).then((obj) => {
       if (obj.code === 2) {
         setErrorState(obj.message);
         setButtonState(false);
@@ -49,22 +53,45 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={submitHandler}>
-        <label htmlFor="login_username">Email: </label>
-        <input id="login_username" onChange={onChangeHandler}></input>
-        <label htmlFor="login_password">Password: </label>
-        <input
-          id="login_password"
-          type={"password"}
-          onChange={onChangeHandler}
-        ></input>
-        <button type="submit" disabled={buttonState}>Log in</button>
-      </form>
-          {errorState && <p>{errorState}</p>}
-      <p>
-        <Link to="/register">Register here</Link>
-      </p>
+    <div className={styles.containerHmd}>
+      <Container component="main" maxWidth="xs">
+        <Stack alignItems="center">
+          <CottageRoundedIcon fontSize="large"/>
+          <Typography variant="h3">Login</Typography>
+        </Stack>
+        <Box component="form" onSubmit={submitHandler}>
+          <TextField
+            margin="normal"
+            fullWidth
+            id="login_username"
+            label="Email Address"
+            name="email"
+            onChange={onChangeHandler}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="login_password"
+            onChange={onChangeHandler}
+          />
+          <div className={styles.containerHsm}>
+            <Button type="submit" variant="contained" disabled={buttonState}>
+              Sign In
+            </Button>
+          </div>
+          <Grid container>
+            <Grid item>
+              <Link to="/register">
+                Don't have an account? Sign Up
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+        {errorState && <p>{errorState}</p>}
+      </Container>
     </div>
   );
 };

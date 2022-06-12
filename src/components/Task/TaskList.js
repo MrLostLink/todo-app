@@ -3,16 +3,31 @@ import { TaskContext } from "../../context/TaskContext";
 import TaskDisplay from "./TaskDisplay";
 
 const TaskList = () => {
-  const DUMMY_LIST = useContext(TaskContext).taskState;
+  const taskContext = useContext(TaskContext);
+  const taskList = taskContext.taskState;
   const [filterState, setFilterState] = useState("");
   const [listState, setListState] = useState([]);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const filterChangeHandler = (event) => {setFilterState(event.target.value);}
+  const filterChangeHandler = (event) => {
+    setFilterState(event.target.value);
+  };
+
+  const completedHandler = async (obj) => {
+    const res = taskContext.markCompleted(obj);
+    if (res.code === 2) {
+      setErrorMsg(res.message);
+      return false;
+    } else return true;
+  };
 
   useEffect(() => {
     const filterList = () => {
-      let fRows = DUMMY_LIST.filter((item) => {
-        return item.title.includes(filterState) || item.description.includes(filterState);
+      let fRows = taskList.filter((item) => {
+        return (
+          item.title.includes(filterState) ||
+          item.description.includes(filterState)
+        );
       });
       setListState(fRows);
     };
@@ -20,24 +35,28 @@ const TaskList = () => {
     return () => {
       clearTimeout(inputTimeout);
     };
-  }, [filterState, DUMMY_LIST]);
+  }, [filterState, taskList]);
 
   return (
     <Fragment>
       <input value={filterState} onChange={filterChangeHandler}></input>
       <table>
-        <tbody>{listState.map((task) => {
-    return (
-      <TaskDisplay
-        key={task.id}
-        id={task.id}
-        title={task.title}
-        description={task.description}
-        dateAdded={task.dateAdded}
-      />
-    );
-  })}</tbody>
+        <tbody>
+          {listState.map((task) => {
+            return (
+              <TaskDisplay
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                description={task.description}
+                dateAdded={task.dateAdded}
+                completedHandler={completedHandler}
+              />
+            );
+          })}
+        </tbody>
       </table>
+      {errorMsg && <p>{errorMsg}</p>}
     </Fragment>
   );
 };

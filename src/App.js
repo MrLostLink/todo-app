@@ -52,6 +52,9 @@ function App() {
               <Login></Login>
             </Route>
           )}
+          {!loggedIn && (<Route path="/register">
+            <Register></Register>
+          </Route>)}
           {!loggedIn && (
             <Route path="*">
               <Redirect to="/login" />
@@ -66,9 +69,7 @@ function App() {
           <Route path="/edit/:taskID">
             <TaskEdit />
           </Route>
-          <Route path="/register">
-            <Register></Register>
-          </Route>
+
           <Route path="*">
             <Redirect to="/" />
           </Route>
