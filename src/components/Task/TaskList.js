@@ -1,6 +1,8 @@
+import { Container, Grid, TextField } from "@mui/material";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { TaskContext } from "../../context/TaskContext";
 import TaskDisplay from "./TaskDisplay";
+import styles from "./TaskList.module.css";
 
 const TaskList = () => {
   const taskContext = useContext(TaskContext);
@@ -39,11 +41,19 @@ const TaskList = () => {
 
   return (
     <Fragment>
-      <input value={filterState} onChange={filterChangeHandler}></input>
-      <table>
-        <tbody>
+      <Container component="main" maxWidth="md">
+        <TextField
+          id="tf_search"
+          label="Search"
+          variant="standard"
+          value={filterState}
+          onChange={filterChangeHandler}
+          className={styles.tf_search}
+        />
+        <Grid container spacing={2}>
           {listState.map((task) => {
             return (
+              <Grid item key={task.id}>
               <TaskDisplay
                 key={task.id}
                 id={task.id}
@@ -52,11 +62,12 @@ const TaskList = () => {
                 dateAdded={task.dateAdded}
                 completedHandler={completedHandler}
               />
+              </Grid>
             );
           })}
-        </tbody>
-      </table>
-      {errorMsg && <p>{errorMsg}</p>}
+        </Grid>
+        {errorMsg && <p>{errorMsg}</p>}
+      </Container>
     </Fragment>
   );
 };
